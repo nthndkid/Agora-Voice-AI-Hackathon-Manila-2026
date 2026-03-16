@@ -196,7 +196,7 @@ const VoiceSessionPage = () => {
           {!hasStarted ? (
             /* ── Pre-call screen ── */
             <div className="text-center space-y-6">
-              <div className="w-24 h-24 bg-gradient-to-br from-[#1f0b47] to-[#2e1065] rounded-3xl flex items-center justify-center text-white mx-auto shadow-xl shadow-[#1f0b47]/20">
+              <div className="w-24 h-24 bg-gradient-to-br from-[#2e1065] to-[#1f0b47] rounded-3xl flex items-center justify-center text-white mx-auto shadow-xl shadow-[#2e1065]/20">
                 <Mic2 size={40} />
               </div>
               <div>
@@ -207,7 +207,7 @@ const VoiceSessionPage = () => {
               </div>
               <button
                 onClick={handleStartSession}
-                className="bg-gradient-to-br from-[#1f0b47] to-[#2e1065] text-white px-10 py-4 rounded-2xl font-bold shadow-lg shadow-[#1f0b47]/20 hover:scale-105 active:scale-95 transition-all"
+                className="bg-gradient-to-br from-[#2e1065] to-[#1f0b47] text-white px-10 py-4 rounded-2xl font-bold shadow-lg shadow-[#2e1065]/20 hover:scale-105 active:scale-95 transition-all"
               >
                 Join Study Room
               </button>

@@ -19,7 +19,7 @@ const DashboardPage = () => {
         </div>
         <button
           onClick={() => navigate('/session')}
-          className="bg-gradient-to-br from-[#1f0b47] to-[#2e1065] text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-[#1f0b47]/20 hover:scale-[1.02] active:scale-95 transition-all"
+          className="bg-gradient-to-br from-[#2e1065] to-[#1f0b47] text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-[#2e1065]/20 hover:scale-[1.02] active:scale-95 transition-all"
         >
           <Mic2 size={18} />
           Start Voice Session

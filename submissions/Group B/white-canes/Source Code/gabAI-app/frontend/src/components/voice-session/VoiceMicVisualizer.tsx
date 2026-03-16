@@ -69,7 +69,7 @@ const VoiceMicVisualizer = ({
             : isConnecting
             ? "bg-gradient-to-br from-amber-400 to-orange-400 shadow-amber-400/30"
             : isActive
-            ? "bg-gradient-to-br from-[#1f0b47] to-[#2e1065] shadow-[#1f0b47]/30"
+            ? "bg-gradient-to-br from-[#2e1065] to-[#1f0b47] shadow-[#2e1065]/30"
             : "bg-white border border-zinc-100 shadow-zinc-100"
         )}
         style={{

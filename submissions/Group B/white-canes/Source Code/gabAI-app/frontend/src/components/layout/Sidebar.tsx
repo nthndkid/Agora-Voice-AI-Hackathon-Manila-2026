@@ -1,12 +1,12 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { 
-  GraduationCap, 
-  LayoutDashboard, 
-  LineChart, 
-  FolderOpen, 
-  Mic2, 
-  Settings, 
+import {
+  GraduationCap,
+  LayoutDashboard,
+  LineChart,
+  FolderOpen,
+  Mic2,
+  Settings,
   LogOut,
   Flame
 } from 'lucide-react';
@@ -53,18 +53,12 @@ const NavItem = ({ label, icon, href }: NavItemConfig) => {
 
 const Sidebar = () => {
   return (
-    <aside className="fixed left-0 top-0 w-[250px] h-screen bg-gradient-to-b from-[#1f0b47] via-[#2e1065] to-[#0f0529] text-white flex flex-col z-50">
+    <aside className="fixed left-0 top-0 w-[250px] h-screen bg-gradient-to-b from-[#2e1065] via-[#2e1065] to-[#0f0529] text-white flex flex-col z-50">
       {/* Logo Area */}
-      <div className="p-6 pb-8">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/10 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20">
-            <GraduationCap className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold tracking-tight leading-none mb-1">gabAI</h1>
-            <p className="text-[10px] uppercase tracking-widest text-white/50 font-medium">Voice AI Tutor</p>
-          </div>
-        </div>
+      <div className="px-8 pt-4 flex">
+        <NavLink to="/" className="block">
+          <img src="/Logo.png" alt="gabAI Logo" className="w-[140px] h-auto mx-auto" />
+        </NavLink>
       </div>
 
       {/* Navigation */}
