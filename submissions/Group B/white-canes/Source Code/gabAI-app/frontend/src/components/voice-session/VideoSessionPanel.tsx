@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 interface VideoSessionPanelProps {
   mode: 'single' | 'dual';
   remoteVideoTrack?: any;
+  localVideoTrack?: any;
   isMuted: boolean;
   isVideoActive: boolean;
   isConnecting?: boolean;
@@ -16,6 +17,7 @@ interface VideoSessionPanelProps {
 const VideoSessionPanel = ({
   mode,
   remoteVideoTrack,
+  localVideoTrack,
   isMuted,
   isVideoActive,
   isConnecting = false,
@@ -23,21 +25,28 @@ const VideoSessionPanel = ({
   onToggleVideo,
   onEndCall
 }: VideoSessionPanelProps) => {
-  const videoRef = useRef<HTMLDivElement>(null);
+  const remoteVideoRef = useRef<HTMLDivElement>(null);
+  const localVideoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (remoteVideoTrack && videoRef.current) {
-      remoteVideoTrack.play(videoRef.current);
+    if (remoteVideoTrack && remoteVideoRef.current) {
+      remoteVideoTrack.play(remoteVideoRef.current);
     }
   }, [remoteVideoTrack]);
 
+  useEffect(() => {
+    if (localVideoTrack && localVideoRef.current && isVideoActive) {
+      localVideoTrack.play(localVideoRef.current);
+    }
+  }, [localVideoTrack, isVideoActive]);
+
   return (
     <div className="relative w-full aspect-video bg-zinc-900 rounded-[28px] overflow-hidden border-8 border-white shadow-2xl shadow-black/20">
-      {/* Video / State Container */}
+      {/* Remote Video / State Container */}
       <div className="absolute inset-0 flex items-center justify-center">
         {remoteVideoTrack ? (
           /* Live Video */
-          <div ref={videoRef} className="w-full h-full object-cover" />
+          <div ref={remoteVideoRef} className="w-full h-full object-cover" />
         ) : isConnecting ? (
           /* Connecting State */
           <div className="flex flex-col items-center gap-5 text-white">
@@ -78,10 +87,26 @@ const VideoSessionPanel = ({
         )}
       </div>
 
+      {/* Local Video (Floating) */}
+      {isVideoActive && localVideoTrack && (
+        <div className={cn(
+          "absolute top-6 right-6 w-1/4 aspect-video bg-zinc-800 rounded-2xl overflow-hidden border-2 border-white/20 shadow-xl z-10 transition-all duration-500",
+          isConnecting && "ring-4 ring-indigo-500/30"
+        )}>
+          <div ref={localVideoRef} className="w-full h-full object-cover" />
+          {isConnecting && (
+            <div className="absolute top-2 left-2 px-2 py-0.5 bg-black/40 backdrop-blur-md rounded text-[10px] font-bold text-white uppercase tracking-wider">
+              Preview
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Controls Bar */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-4 bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 shadow-2xl">
         <button
           onClick={onToggleVideo}
+          title={isVideoActive ? "Turn off camera" : "Turn on camera"}
           className={cn(
             "w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90",
             isVideoActive
@@ -94,6 +119,7 @@ const VideoSessionPanel = ({
 
         <button
           onClick={onEndCall}
+          title="End session"
           className="w-14 h-14 bg-red-500 text-white rounded-2xl flex items-center justify-center hover:bg-red-600 hover:scale-110 active:scale-90 transition-all shadow-xl shadow-red-500/30"
         >
           <PhoneOff size={24} fill="currentColor" />
@@ -101,6 +127,7 @@ const VideoSessionPanel = ({
 
         <button
           onClick={onToggleMute}
+          title={isMuted ? "Unmute microphone" : "Mute microphone"}
           className={cn(
             "w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90",
             !isMuted
