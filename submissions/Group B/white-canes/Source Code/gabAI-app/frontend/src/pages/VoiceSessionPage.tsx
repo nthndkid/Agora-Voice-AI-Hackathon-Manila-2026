@@ -19,12 +19,24 @@ const VoiceSessionPage = () => {
   const [agentId, setAgentId] = useState<string | null>(null);
   const [remoteVideoTrack, setRemoteVideoTrack] = useState<IRemoteVideoTrack | null>(null);
   const [localVideoTrack, setLocalVideoTrack] = useState<ILocalVideoTrack | null>(null);
+  const [volumeLevel, setVolumeLevel] = useState(0);
 
   const clientRef = useRef<IAgoraRTCClient | null>(null);
   const localAudioTrackRef = useRef<ILocalAudioTrack | null>(null);
 
   useEffect(() => {
     clientRef.current = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+
+    // Handle volume monitoring
+    let volumeInterval: any;
+    if (isConnected && !isMuted && localAudioTrackRef.current) {
+      volumeInterval = setInterval(() => {
+        const level = localAudioTrackRef.current?.getVolumeLevel() || 0;
+        setVolumeLevel(level);
+      }, 100);
+    } else {
+      setVolumeLevel(0);
+    }
 
     clientRef.current.on('user-published', async (user, mediaType) => {
       await clientRef.current?.subscribe(user, mediaType);
@@ -42,8 +54,11 @@ const VoiceSessionPage = () => {
       if (mediaType === 'video') setRemoteVideoTrack(null);
     });
 
-    return () => { handleEndSession(); };
-  }, []);
+    return () => {
+      if (volumeInterval) clearInterval(volumeInterval);
+      handleEndSession();
+    };
+  }, [isConnected, isMuted]);
 
   const handleStartSession = async () => {
     // 1. Immediately show the video UI and start local camera
@@ -213,31 +228,32 @@ const VoiceSessionPage = () => {
                   onEndCall={handleEndSession}
                 />
               ) : (
-                <div className="flex flex-col items-center gap-10">
+                <div className="flex flex-col items-center gap-12">
                   <VoiceMicVisualizer
                     isActive={isConnected && !isMuted}
                     isConnecting={isConnecting}
                     isMuted={isMuted}
+                    volumeLevel={volumeLevel}
                   />
                   {/* Controls — mirrors video chat style */}
-                  <div className="flex items-center gap-4 px-6 py-4 bg-white border border-zinc-100 rounded-3xl shadow-lg">
+                  <div className="flex items-center gap-4 px-8 py-5 bg-white border border-zinc-100 rounded-3xl shadow-xl">
                     <button
                       onClick={toggleMute}
                       title={isMuted ? "Unmute microphone" : "Mute microphone"}
-                      className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90 ${isMuted
-                          ? 'bg-red-500 text-white shadow-lg shadow-red-500/20 hover:bg-red-600'
-                          : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                      className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all active:scale-90 ${isMuted
+                        ? 'bg-red-500 text-white shadow-lg shadow-red-500/20 hover:bg-red-600'
+                        : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
                         }`}
                     >
-                      {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
+                      {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
                     </button>
 
                     <button
                       onClick={handleEndSession}
                       title="End session"
-                      className="w-14 h-14 bg-red-500 text-white rounded-2xl flex items-center justify-center hover:bg-red-600 hover:scale-110 active:scale-90 transition-all shadow-xl shadow-red-500/30"
+                      className="w-16 h-16 bg-red-500 text-white rounded-2xl flex items-center justify-center hover:bg-red-600 hover:scale-110 active:scale-90 transition-all shadow-xl shadow-red-500/30"
                     >
-                      <PhoneOff size={22} fill="currentColor" />
+                      <PhoneOff size={26} fill="currentColor" />
                     </button>
                   </div>
                 </div>
@@ -247,7 +263,7 @@ const VoiceSessionPage = () => {
         </div>
 
         {/* Bottom Input */}
-        <div className="mt-6 max-w-3xl w-full mx-auto pb-4">
+        <div className="mt-8 max-w-4xl w-full mx-auto pb-4">
           <PromptInputBar
             value={prompt}
             onChange={setPrompt}
